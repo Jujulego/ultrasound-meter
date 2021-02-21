@@ -39,50 +39,52 @@ int digits[NUM_OF_DIGITS] = {0, 0, 0, 0};
 unsigned long prev = 0, updateTime = 500;
 Ultrasonic ultrasonic(6, 7);
 
+void updateN();
+
 void setup() {
-  Serial.begin(115200);
-  pinMode(latch, OUTPUT);
-  pinMode(cs, OUTPUT);
-  pinMode(data, OUTPUT);
-  
-  for (const int& pin: dPin) {
-    pinMode(pin, OUTPUT);
-  }
+    Serial.begin(115200);
+    pinMode(latch, OUTPUT);
+    pinMode(cs, OUTPUT);
+    pinMode(data, OUTPUT);
+
+    for (const int& pin: dPin) {
+        pinMode(pin, OUTPUT);
+    }
 }
 
 void loop() {
-  updateN();
+    updateN();
 
-  long t = millis();
-  if (t > prev + updateTime) {
-    prev = t;
+    long t = millis();
+    if (t > prev + updateTime) {
+        prev = t;
 
-    unsigned int n = ultrasonic.read();
-    for (int i = NUM_OF_DIGITS; i > 0; --i) {
-      digits[i-1] = n % 10;
-      n /= 10;
+        unsigned int n = ultrasonic.read();
+        for (int i = NUM_OF_DIGITS; i > 0; --i) {
+            digits[i-1] = n % 10;
+            n /= 10;
+        }
     }
-  }
 }
 
 void displayN(int i, int n, bool dot = false) {
-  digitalWrite(latch, LOW);
-  unsigned char code = table[n];
-  if (dot) {
-    code = code | DOT;
-  }
-  shiftOut(data, cs, MSBFIRST, code);
-  digitalWrite(latch, HIGH);
+    digitalWrite(latch, LOW);
+    unsigned char code = table[n];
+    if (dot) {
+        code = code | DOT;
+    }
+    shiftOut(data, cs, MSBFIRST, code);
+    digitalWrite(latch, HIGH);
 
-  for (const int& d: dPin) {
-    digitalWrite(d, HIGH);
-  }
-  digitalWrite(dPin[i], LOW);
+    for (const int& d: dPin) {
+        digitalWrite(d, HIGH);
+    }
+    digitalWrite(dPin[i], LOW);
 }
 
 void updateN() {
-  for (int i = 0; i < NUM_OF_DIGITS; i++) {
-    displayN(i, digits[i]);
-    delay(5);
-  }
+    for (int i = 0; i < NUM_OF_DIGITS; i++) {
+        displayN(i, digits[i]);
+        delay(5);
+    }
 }
