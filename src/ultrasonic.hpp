@@ -9,9 +9,6 @@ class Ultrasonic {
     uint8_t trigPin;
     uint8_t echoPin;
 
-    volatile uint64_t lastUp = 0UL;
-    volatile uint64_t lastMeasure = 0UL;
-
   public:
     // Constructor
     Ultrasonic(uint8_t trigPin, uint8_t echoPin);

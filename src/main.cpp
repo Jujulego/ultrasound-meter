@@ -1,5 +1,6 @@
 #include <Arduino.h>
-#include <Ultrasonic.h>
+
+#include "ultrasonic.hpp"
 
 #define NUM_OF_DIGITS 4
 #define DOT 0x80
@@ -36,55 +37,63 @@ unsigned char table[] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0
 
 int digits[NUM_OF_DIGITS] = {0, 0, 0, 0};
 
-unsigned long prev = 0, updateTime = 500;
-Ultrasonic ultrasonic(6, 7);
+unsigned long prevDisplay = 0, deltaDisplay = 500;
+unsigned long prevUltrasonic = 0, deltaUltrasonic = 500;
+Ultrasonic ultrasonic(6, 2);
 
 void updateN();
 
 void setup() {
-    Serial.begin(115200);
-    pinMode(latch, OUTPUT);
-    pinMode(cs, OUTPUT);
-    pinMode(data, OUTPUT);
+  Serial.begin(9600);
+  pinMode(latch, OUTPUT);
+  pinMode(cs, OUTPUT);
+  pinMode(data, OUTPUT);
 
-    for (const int& pin: dPin) {
-        pinMode(pin, OUTPUT);
-    }
+  for (const int& pin: dPin) {
+    pinMode(pin, OUTPUT);
+  }
+
+  ultrasonic.setup();
 }
 
 void loop() {
-    updateN();
+  updateN();
 
-    long t = millis();
-    if (t > prev + updateTime) {
-        prev = t;
+  unsigned long t = millis();
+  if (t > prevDisplay + deltaDisplay) {
+    prevDisplay = t;
 
-        unsigned int n = ultrasonic.read();
-        for (int i = NUM_OF_DIGITS; i > 0; --i) {
-            digits[i-1] = n % 10;
-            n /= 10;
-        }
+    unsigned int n = ultrasonic.getMeasure();
+    for (int i = NUM_OF_DIGITS; i > 0; --i) {
+      digits[i-1] = n % 10;
+      n /= 10;
     }
+  }
+
+  if (t > prevUltrasonic + deltaUltrasonic) {
+    prevUltrasonic = t;
+    ultrasonic.trigger();
+  }
 }
 
 void displayN(int i, int n, bool dot = false) {
-    digitalWrite(latch, LOW);
-    unsigned char code = table[n];
-    if (dot) {
-        code = code | DOT;
-    }
-    shiftOut(data, cs, MSBFIRST, code);
-    digitalWrite(latch, HIGH);
+  digitalWrite(latch, LOW);
+  unsigned char code = table[n];
+  if (dot) {
+    code = code | DOT;
+  }
+  shiftOut(data, cs, MSBFIRST, code);
+  digitalWrite(latch, HIGH);
 
-    for (const int& d: dPin) {
-        digitalWrite(d, HIGH);
-    }
-    digitalWrite(dPin[i], LOW);
+  for (const int& d: dPin) {
+    digitalWrite(d, HIGH);
+  }
+  digitalWrite(dPin[i], LOW);
 }
 
 void updateN() {
-    for (int i = 0; i < NUM_OF_DIGITS; i++) {
-        displayN(i, digits[i]);
-        delay(5);
-    }
+  for (int i = 0; i < NUM_OF_DIGITS; i++) {
+    displayN(i, digits[i]);
+    delay(5);
+  }
 }

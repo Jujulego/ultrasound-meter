@@ -2,6 +2,24 @@
 
 #include "ultrasonic.hpp"
 
+// Intern
+volatile unsigned long lastUp = 0;
+volatile unsigned long lastDown = 0;
+
+void fallingInterrupt();
+
+void risingInterrupt() {
+  lastUp = micros();
+
+  attachInterrupt(digitalPinToInterrupt(2), fallingInterrupt, FALLING);
+}
+
+void fallingInterrupt() {
+  lastDown = micros();
+  
+  attachInterrupt(digitalPinToInterrupt(2), risingInterrupt, RISING);
+}
+
 // Constructor
 Ultrasonic::Ultrasonic(uint8_t trigPin, uint8_t echoPin) {
   this->trigPin = trigPin;
@@ -12,24 +30,21 @@ Ultrasonic::Ultrasonic(uint8_t trigPin, uint8_t echoPin) {
 void Ultrasonic::setup() const {
   // Setup pins
   pinMode(this->trigPin, OUTPUT);
-  pinMode(this->echoPin, INPUT);
+  pinMode(this->echoPin, INPUT_PULLUP);
 
   // Setup interrupts
-  attachInterrupt(digitalToInterrupt(this->echoPin), () => {
-    this->lastUp = micros();
-  }, RISING);
-
-  attachInterrupt(digitalToInterrupt(this->echoPin), () => {
-    this->lastMeasure = micros() - this->lastUp;
-  }, FALLING);
+  attachInterrupt(digitalPinToInterrupt(this->echoPin), risingInterrupt, RISING);
 }
 
 void Ultrasonic::trigger() const {
-  digitalWrite(trig, HIGH);
+  digitalWrite(this->trigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trig, LOW);
+  digitalWrite(this->trigPin, LOW);
 }
 
 uint64_t Ultrasonic::getMeasure() const {
-  return this->lastMeasure / 56;
+  Serial.print(lastDown);
+  Serial.print(" - ");
+  Serial.println(lastUp);
+  return (lastDown - lastUp) / 56;
 }
