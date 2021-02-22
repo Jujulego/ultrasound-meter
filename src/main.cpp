@@ -39,7 +39,7 @@ int digits[NUM_OF_DIGITS] = {0, 0, 0, 0};
 
 unsigned long prevDisplay = 0, deltaDisplay = 500;
 unsigned long prevUltrasonic = 0, deltaUltrasonic = 500;
-Ultrasonic ultrasonic(6, 2);
+Ultrasonic ultrasonic;
 
 void updateN();
 
@@ -53,7 +53,7 @@ void setup() {
     pinMode(pin, OUTPUT);
   }
 
-  ultrasonic.setup();
+  Ultrasonic::setup(2, 6);
 }
 
 void loop() {
@@ -63,7 +63,7 @@ void loop() {
   if (t > prevDisplay + deltaDisplay) {
     prevDisplay = t;
 
-    unsigned int n = ultrasonic.getMeasure();
+    long n = round(ultrasonic.getMeasure());
     for (int i = NUM_OF_DIGITS; i > 0; --i) {
       digits[i-1] = n % 10;
       n /= 10;

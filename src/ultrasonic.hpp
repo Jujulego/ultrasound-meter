@@ -4,18 +4,16 @@
 
 // Class
 class Ultrasonic {
-  private:
-    // Attributes
-    uint8_t trigPin;
-    uint8_t echoPin;
-
   public:
     // Constructor
-    Ultrasonic(uint8_t trigPin, uint8_t echoPin);
+    Ultrasonic() {};
+
+    // Statics
+    static void setup(uint8_t echoPin, uint8_t trigPin);
 
     // Methods
-    void setup() const;
-    void trigger() const;
+    void trigger();
 
-    uint64_t getMeasure() const;
+    double getRawMeasure() const;
+    double getMeasure();
 };

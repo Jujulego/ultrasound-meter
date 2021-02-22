@@ -10,7 +10,6 @@
             "includePath": [
                 "C:/Users/julie/git/ultrasound-meter/include",
                 "C:/Users/julie/git/ultrasound-meter/src",
-                "C:/Users/julie/git/ultrasound-meter/lib/Ultrasonic",
                 "C:/Users/julie/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/julie/.platformio/packages/framework-arduino-avr/variants/standard",
                 "C:/Users/julie/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
@@ -25,7 +24,6 @@
                 "path": [
                     "C:/Users/julie/git/ultrasound-meter/include",
                     "C:/Users/julie/git/ultrasound-meter/src",
-                    "C:/Users/julie/git/ultrasound-meter/lib/Ultrasonic",
                     "C:/Users/julie/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/julie/.platformio/packages/framework-arduino-avr/variants/standard",
                     "C:/Users/julie/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
