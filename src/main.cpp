@@ -63,7 +63,7 @@ void loop() {
   if (t > prevDisplay + deltaDisplay) {
     prevDisplay = t;
 
-    long n = round(ultrasonic.getMeasure());
+    unsigned long n = ultrasonic.getMeasure();
     for (int i = NUM_OF_DIGITS; i > 0; --i) {
       digits[i-1] = n % 10;
       n /= 10;

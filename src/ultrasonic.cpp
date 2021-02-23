@@ -3,7 +3,7 @@
 
 #include "ultrasonic.hpp"
 
-#define MEAN_WEIGHT 0.7
+#define MEAN_WEIGHT 0.8
 
 // Intern
 uint8_t echoPin = 0;
@@ -23,7 +23,7 @@ void risingInterrupt() {
 }
 
 void fallingInterrupt() {
-  measure = lastUp - micros();
+  measure = micros() - lastUp;
   mean = mean * (1 - MEAN_WEIGHT) + measure * MEAN_WEIGHT;
   attachInterrupt(digitalPinToInterrupt(echoPin), risingInterrupt, RISING);
 }
